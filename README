@@ -1,0 +1,37 @@
+cmps183 - homework 1
+Jonathan Yang - jyang37@ucsc.edu
+
+Project Name:
+
+  lboard
+
+Overview:
+
+  lboard is a for-sale listing site using web2py.
+
+Specifications (from the course website):
+
+  The for-sale site must allow (logged in) users to add listings. These
+  listings should contain at least the following information:
+
+    - Seller name and contact info (email / phone / ...)
+    - A date posted
+    - A title for the listing
+    - A body for the listing
+    - If they wish, an image.  
+    - A category, one of: Car, Bike, Books, Music, Outdoors, For the 
+      house, Misc.
+    - A price. 
+    - Whether the item is sold or still available. 
+
+  Users should be able to:
+
+    - Add an item while logged in.
+    - View all items.
+
+  The default view should return all items.
+
+Notes:
+
+  Initial code used from in-class example, "bboard", written by Luca de
+  Alfaro.  
