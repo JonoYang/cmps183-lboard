@@ -8,7 +8,7 @@ def get_first_name():
         name = auth.user.first_name
     return name
 
-CATEGORY = ['For Sale', 'Wanted', 'Misc']
+CATEGORY = ['Car', 'Bike', 'Books', 'Music', 'Outdoors', 'For the House', 'Misc.']
 
 
 db.define_table('bboard',
@@ -19,6 +19,8 @@ db.define_table('bboard',
                 Field('category'),
                 Field('date_posted', 'datetime'),
                 Field('title'),
+                Field('price'),
+                Field('sold', 'boolean'),
                 Field('bbmessage', 'text'),
                 )
 
@@ -32,7 +34,8 @@ db.bboard.user_id.default = auth.user_id
 db.bboard.user_id.writable = db.bboard.user_id.readable = False
 db.bboard.email.requires = IS_EMAIL()
 db.bboard.category.requires = IS_IN_SET(CATEGORY)
-db.bboard.category.default = 'Misc'
+db.bboard.category.default = 'Misc.'
 db.bboard.category.required = True
-
-
+db.bboard.sold.default = False
+db.bboard.sold.writable = False
+#db.bboard.sold.readable = False
