@@ -9,7 +9,7 @@
 ## - api is an example of Hypermedia API support and access control
 #########################################################################
 
-def index():
+def index2():
     """
     This index appears when you go to bboard/default/index . 
     """
@@ -30,10 +30,12 @@ def add():
 def view():
     """View a post."""
     # p = db(db.bboard.id == request.args(0)).select().first()
+    image = db.bboard.image(request.args(0,cast=int)) or redirect(URL('index'))
     p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
     form = SQLFORM(db.bboard, record=p, readonly=True)
+    
     # p.name would contain the name of the poster.
-    return dict(form=form)
+    return dict(image=image,form=form)
 
 @auth.requires_login()
 def edit():
@@ -61,11 +63,12 @@ def delete():
     db(db.bboard.id == p.id).delete()
     redirect(URL('default', 'index'))
     
-def index2():
+def index():
     """Better index."""
     # Let's get all data. 
     q = db.bboard
-    
+    #image = db.bboard.image(request.args(0,cast=int)) or redirect(URL('index'))
+
     def generate_del_button(row):
         # If the record is ours, we can delete it.
         b = ''
@@ -96,12 +99,15 @@ def index2():
         db.bboard.bbmessage.readable = False
     
     form = SQLFORM.grid(q,
-        fields=[db.bboard.user_id, db.bboard.date_posted, 
-                db.bboard.category, db.bboard.title, 
-                db.bboard.bbmessage],
-        editable=False, deletable=False,
+        fields=[db.bboard.user_id,
+                db.bboard.title,
+                db.bboard.date_posted,
+                db.bboard.category,
+                db.bboard.bbmessage 
+                ],
         links=links,
-        paginate=2,
+        editable=False,
+        deletable=False,
         )
     return dict(form=form)
 

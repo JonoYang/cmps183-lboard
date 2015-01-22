@@ -43,6 +43,5 @@ db.bboard.category.requires = IS_IN_SET(CATEGORY)
 db.bboard.category.default = 'Misc.'
 db.bboard.category.required = True
 db.bboard.sold.default = False
-db.bboard.sold.writable = False
 db.bboard.phone.requires = IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$',
                                     error_message='not a phone number')
