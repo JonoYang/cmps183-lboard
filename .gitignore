@@ -5,4 +5,5 @@ errors/*
 sessions/*
 *.pyc
 *.bak
-
+*~
+uploads/*

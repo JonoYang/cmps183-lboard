@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-
 def get_first_name():
     name = 'Nobody'
     if auth.user:
         name = auth.user.first_name
     return name
 
-CATEGORY = ['Car', 'Bike', 'Books', 'Music', 'Outdoors', 'For the House', 'Misc.']
-
+CATEGORY = ['Car',
+            'Bike',
+            'Books',
+            'Music',
+            'Outdoors',
+            'For the House',
+            'Misc.']
 
 db.define_table('bboard',
                 Field('name'),
@@ -21,8 +25,10 @@ db.define_table('bboard',
                 Field('title'),
                 Field('price'),
                 Field('sold', 'boolean'),
+                Field('image', 'upload'),
                 Field('bbmessage', 'text'),
                 )
+
 
 db.bboard.id.readable = False
 db.bboard.bbmessage.label = 'Message'
@@ -38,4 +44,5 @@ db.bboard.category.default = 'Misc.'
 db.bboard.category.required = True
 db.bboard.sold.default = False
 db.bboard.sold.writable = False
-#db.bboard.sold.readable = False
+db.bboard.phone.requires = IS_MATCH('^1?((-)\d{3}-?|\(\d{3}\))\d{3}-?\d{4}$',
+                                    error_message='not a phone number')

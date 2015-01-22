@@ -1,9 +1,9 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 
-<h1>Welcome to the crazy bboard</h1>
+<!-- <h1>lboard - a next level sale listing site</h1> -->
 
-<h2>Posts:</h2>
+<h2>Listings:</h2>
 
 {{if len(posts) > 0:}}
 
@@ -24,3 +24,5 @@ There are no posts.
 <p>
 {{=A('Add a post', _class='btn', _href=URL('default', 'add'))}}
 </p>
+
+
