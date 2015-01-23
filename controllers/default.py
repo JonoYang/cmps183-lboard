@@ -26,7 +26,8 @@ def add():
         session.flash = T("inserted")
         redirect(URL('default', 'index'))
     return dict(form=form)
-
+    
+@auth.requires_login()
 def view():
     """View a post."""
     # p = db(db.bboard.id == request.args(0)).select().first()
@@ -38,6 +39,7 @@ def view():
     return dict(image=image,form=form)
 
 @auth.requires_login()
+@auth.requires_signature()
 def edit():
     """View a post."""
     # p = db(db.bboard.id == request.args(0)).select().first()
@@ -62,7 +64,8 @@ def delete():
         redirect(URL('default', 'index'))
     db(db.bboard.id == p.id).delete()
     redirect(URL('default', 'index'))
-    
+
+@auth.requires_login()
 def index():
     """Better index."""
     # Let's get all data. 
@@ -73,7 +76,7 @@ def index():
         # If the record is ours, we can delete it.
         b = ''
         if auth.user_id == row.user_id:
-            b = A('Delete', _class='btn', _href=URL('default', 'delete', args=[row.id]))
+            b = A('Delete', _class='btn', _href=URL('default', 'delete', args=[row.id], user_signature=True))
         return b
     
     def generate_edit_button(row):
@@ -99,11 +102,11 @@ def index():
         db.bboard.bbmessage.readable = False
     
     form = SQLFORM.grid(q,
-        fields=[db.bboard.user_id,
+        fields=[db.bboard.category,
                 db.bboard.title,
                 db.bboard.date_posted,
-                db.bboard.category,
-                db.bboard.bbmessage 
+                db.bboard.user_id,        
+                db.bboard.bbmessage, 
                 ],
         links=links,
         editable=False,
