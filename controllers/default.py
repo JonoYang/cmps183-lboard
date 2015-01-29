@@ -27,19 +27,16 @@ def add():
         redirect(URL('default', 'index'))
     return dict(form=form)
     
-@auth.requires_login()
 def view():
     """View a post."""
     # p = db(db.bboard.id == request.args(0)).select().first()
-    image = db.bboard.image(request.args(0,cast=int)) or redirect(URL('index'))
     p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
-    form = SQLFORM(db.bboard, record=p, readonly=True)
+    form = SQLFORM(db.bboard, record = p, readonly = True, upload = URL('download'))
     
     # p.name would contain the name of the poster.
-    return dict(image=image,form=form)
+    return dict(form=form)
 
 @auth.requires_login()
-@auth.requires_signature()
 def edit():
     """View a post."""
     # p = db(db.bboard.id == request.args(0)).select().first()
@@ -66,10 +63,18 @@ def delete():
     redirect(URL('default', 'index'))
 
 @auth.requires_login()
+@auth.requires_signature()
+def toggle_sold():
+     item = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
+     item.update_record(sold = not item.sold) 
+     redirect(URL('default', 'index')) # Assuming this is where you want to go
+
 def index():
     """Better index."""
     # Let's get all data. 
-    q = db.bboard
+    show_all = request.args(0) == 'all'
+    #q = db.bboard
+    q = (db.bboard) if show_all else (db.bboard.sold == False)
     #image = db.bboard.image(request.args(0,cast=int)) or redirect(URL('index'))
 
     def generate_del_button(row):
@@ -86,6 +91,12 @@ def index():
             b = A('Edit', _class='btn', _href=URL('default', 'edit', args=[row.id]))
         return b
     
+    def generate_sold_button(row):
+        b = ''
+        if auth.user_id == row.user_id:
+            b = A('Sold', _class='btn', _href=URL('default', 'toggle_sold', args=[row.id], user_signature=True))
+        return b
+
     def shorten_post(row):
         return row.bbmessage[:10] + '...'
     
@@ -94,16 +105,20 @@ def index():
     links = [
         dict(header='', body = generate_del_button),
         dict(header='', body = generate_edit_button),
+        dict(header='', body = generate_sold_button),
         ]
 
     if len(request.args) == 0:
         # We are in the main index.
         links.append(dict(header='Post', body = shorten_post))
         db.bboard.bbmessage.readable = False
-    
+
+    start_idx = 1 if show_all else 0
     form = SQLFORM.grid(q,
+        args=request.args[:start_idx],
         fields=[db.bboard.category,
                 db.bboard.title,
+                db.bboard.sold,
                 db.bboard.date_posted,
                 db.bboard.user_id,        
                 db.bboard.bbmessage, 
@@ -112,7 +127,13 @@ def index():
         editable=False,
         deletable=False,
         )
-    return dict(form=form)
+
+    if show_all:
+        button = A('See unsold', _class='btn', _href=URL('default', 'index'))
+    else:
+        button = A('See all', _class='btn', _href=URL('default', 'index', args=['all']))
+
+    return dict(form=form, button=button)
 
 def user():
     """
