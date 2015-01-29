@@ -57,10 +57,16 @@ def delete():
     """Deletes a post."""
     p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
     if p.user_id != auth.user_id:
-        session.flash = T('Not authorized.')
+        session.flash = T('Not authorized')
         redirect(URL('default', 'index'))
-    db(db.bboard.id == p.id).delete()
-    redirect(URL('default', 'index'))
+    confirm = FORM.confirm('Delete listing')
+    form = SQLFORM(db.bboard, record = p, readonly = True, upload = URL('download'))
+    if confirm.accepted:
+        db(db.bboard.id == p.id).delete()
+        session.flash = T('Listing deleted')
+        redirect(URL('default', 'index'))
+
+    return dict(form=form, confirm=confirm)
 
 @auth.requires_login()
 @auth.requires_signature()
