@@ -32,9 +32,9 @@ def view():
     # p = db(db.bboard.id == request.args(0)).select().first()
     p = db.bboard(request.args(0)) or redirect(URL('default', 'index'))
     form = SQLFORM(db.bboard, record = p, readonly = True, upload = URL('download'))
-    
+    button = A('Return to listings', _class='btn', _href=URL('default', 'index'))
     # p.name would contain the name of the poster.
-    return dict(form=form)
+    return dict(form=form, button = button)
 
 @auth.requires_login()
 def edit():
